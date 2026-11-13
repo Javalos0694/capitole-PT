@@ -25,17 +25,20 @@ public sealed class CancelBookingHandler : IRequestHandler<CancelBookingCommand,
     private readonly IUnitOfWork _unitOfWork;
     private readonly IClock _clock;
     private readonly IBookingCache _cache;
+    private readonly IBookingRealtimeNotifier _realtime;
 
     public CancelBookingHandler(
         IBookingRepository repository,
         IUnitOfWork unitOfWork,
         IClock clock,
-        IBookingCache cache)
+        IBookingCache cache,
+        IBookingRealtimeNotifier realtime)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
         _clock = clock;
         _cache = cache;
+        _realtime = realtime;
     }
 
     public async Task<BookingDto> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
@@ -49,6 +52,7 @@ public sealed class CancelBookingHandler : IRequestHandler<CancelBookingCommand,
         var dto = BookingMapper.ToDto(booking);
         await _cache.RemoveByIdAsync(dto.Id, cancellationToken);
         await _cache.InvalidateListsAsync(cancellationToken);
+        await _realtime.NotifyChangedAsync(dto.Id, dto.Status, "cancelled", cancellationToken);
         return dto;
     }
 }

@@ -21,13 +21,14 @@ public class ConfirmBookingHandlerTests
         var repo = new Mock<IBookingRepository>();
         var uow = new Mock<IUnitOfWork>();
         var cache = new Mock<IBookingCache>();
+        var realtime = new Mock<IBookingRealtimeNotifier>();
 
         repo.Setup(r => r.GetByIdAsync(booking.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(booking);
         repo.Setup(r => r.AnyAsync(It.IsAny<Specification<Booking>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        var handler = new ConfirmBookingHandler(repo.Object, uow.Object, _clock, cache.Object);
+        var handler = new ConfirmBookingHandler(repo.Object, uow.Object, _clock, cache.Object, realtime.Object);
         var result = await handler.Handle(new ConfirmBookingCommand(booking.Id.Value), CancellationToken.None);
 
         result.Status.Should().Be(nameof(BookingStatus.Confirmed));
@@ -41,13 +42,14 @@ public class ConfirmBookingHandlerTests
         var repo = new Mock<IBookingRepository>();
         var uow = new Mock<IUnitOfWork>();
         var cache = new Mock<IBookingCache>();
+        var realtime = new Mock<IBookingRealtimeNotifier>();
 
         repo.Setup(r => r.GetByIdAsync(booking.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(booking);
         repo.Setup(r => r.AnyAsync(It.IsAny<ConfirmedOverlappingBookingSpec>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        var handler = new ConfirmBookingHandler(repo.Object, uow.Object, _clock, cache.Object);
+        var handler = new ConfirmBookingHandler(repo.Object, uow.Object, _clock, cache.Object, realtime.Object);
         var act = () => handler.Handle(new ConfirmBookingCommand(booking.Id.Value), CancellationToken.None);
 
         var ex = await act.Should().ThrowAsync<DomainException>();

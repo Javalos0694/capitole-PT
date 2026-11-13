@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
+import { BookingRealtimeSync } from './realtime/BookingRealtimeSync';
 import { ToastProvider } from './ui/ToastContext';
 import './styles.css';
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ToastProvider>
+          <BookingRealtimeSync />
           <App />
         </ToastProvider>
       </BrowserRouter>

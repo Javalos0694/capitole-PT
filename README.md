@@ -108,11 +108,14 @@ docker-compose.yml
 
 Ver `docs/adr/` (validación, mediator, solape/concurrencia, outbox, GenericTable).
 
+## Tiempo real
+
+SignalR en `/hubs/bookings`: al crear/confirmar/cancelar se emite `BookingChanged` y el front invalida listado/detalle.
+
 ## Qué haría con más tiempo
 
 - Exclusion constraint GiST en PostgreSQL para solapes Confirmed
 - Migraciones EF versionadas (ahora `EnsureCreated` para el MVP)
-- SignalR para refresco en vivo
 - Tests de arquitectura (NetArchTest) y un e2e Playwright
 - OpenTelemetry end-to-end
 
