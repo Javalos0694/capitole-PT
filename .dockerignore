@@ -1,0 +1,11 @@
+**/.git
+**/.vs
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.env
+**/TestResults
+docs/Prueba*
+*.md
+!README.md
